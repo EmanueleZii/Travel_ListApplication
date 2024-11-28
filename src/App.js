@@ -6,26 +6,35 @@ const InitialItems = [
   {id:3, description:"Bags", quantity:16, packed:true},
 ];
 
-export default function App(){
+export default function App()
+{
   
-  const [items, setItem] = useState([]);
+  const [items, setItem] = useState(InitialItems);
 
   function handleItems(item)
   {
     setItem((items)=>[...items, item]);
+  }
+  
+  function handleDeleteItem(id){
+    // Filtra gli elementi mantenendo solo quelli il cui id non corrisponde a quello passato
+    setItem(items=>items.filter(item=>item.id !== id))
   }
 
  return (
  <div className="app">
     <Logo />
     <Form onAddItems={handleItems} />
-    <PackingList items={items} />
+    <PackingList items={items} OnDeleteItem={handleDeleteItem} />
     <Stats />
   </div>
  );
 }
 
-function Logo(){
+
+
+function Logo()
+{
   return (
     <h1> Far Away </h1>
     );
@@ -33,9 +42,9 @@ function Logo(){
 
 function Form({onAddItems})
 {
+
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
- 
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -62,29 +71,30 @@ function Form({onAddItems})
     );
 }
 
-function PackingList({items}){
+function PackingList({items, OnDeleteItem}){
   return (
     <div className="list">
       <ul>
       {items.map((item) => (
-        <Item item={item} key={item.id} />
+        <Item item={item} OnDeleteItem={OnDeleteItem} key={item.id} />
       ))}
       </ul>
     </div>
   );
 }
 
-function Item({item})
+function Item({item, OnDeleteItem})
 {
  return <li>
    <span style={item.packed ? {textDecoration:'line-through'} : {}}>
     {item.quantity} {item.description}
     </span>
-    <button className="btn">&times;</button>
+    <button className="btn" onClick={()=>OnDeleteItem(item.id)}>&times;</button>
   </li>
 }
 
-function Stats(){
+function Stats()
+{
   return (
     <footer> 
       <em>You have X items on your list, and you already packed X (X%)</em>
